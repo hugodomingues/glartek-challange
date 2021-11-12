@@ -1,6 +1,6 @@
 # glartek-challange
 Project Setup
-npm install 
+# npm install 
 
 Create and start the project
-npm run dev
+# npm run dev
