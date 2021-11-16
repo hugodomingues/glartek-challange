@@ -25,10 +25,14 @@ const createRenderer = (bundle, options) => {
     }
 }
 
+function getStyle () {
+    return fs.readFileSync(resolve('./public/css/bootstrap.min.css'), 'utf-8').replace(/\n/g, '');
+  }
+
 const renderPage = (context) => {
     // If is production AND not client
     !context.inject ? true : false;
     return mustache.render(template, context);
 }
 
-module.exports = { createRenderer, renderPage, isProd, port }
+module.exports = { createRenderer, renderPage, isProd, port, getStyle }

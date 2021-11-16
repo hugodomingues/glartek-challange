@@ -6,7 +6,7 @@ const compression = require('compression')
 const resolve = (file) => path.resolve(__dirname, file);
 const fetch = require('node-fetch');
 
-const {createRenderer, renderPage, isProd, port } = require('./helpers')
+const {createRenderer, renderPage, isProd, port, getStyle } = require('./helpers')
 
 let renderer, readyPromise;
 
@@ -35,8 +35,14 @@ app.use(favicon('./public/favicon.ico'))
 app.use('/dist', serve('./dist', true));
 app.use('/public', serve('./public', true));
 
-app.get('/api-call', async(req, res ) => {
-  console.log("entrei");
+app.get('/api-call', (req, res ) => {
+  const API_KEY = 'dfa48ecda1ee984356d1f76c0a1e5dc2';
+  const url = `http://api.openweathermap.org/data/2.5/weather?id=2267094&APPID=${API_KEY}`
+  
+  fetch(url)
+  .then(response => response.json())
+  .then( data =>res.send(data))
+
 })
 
 async function render(req, res) {
@@ -77,6 +83,7 @@ async function render(req, res) {
   let { renderStyles, renderResourceHints, renderScripts } = context;
 
   context.scripts = context.inject ? renderScripts() : null;
+  context.css = getStyle();
 
   const html = renderPage(context);
   
