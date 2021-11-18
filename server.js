@@ -37,7 +37,9 @@ app.use('/public', serve('./public', true));
 
 app.get('/api-call', (req, res ) => {
   const API_KEY = 'dfa48ecda1ee984356d1f76c0a1e5dc2';
-  const url = `http://api.openweathermap.org/data/2.5/weather?id=2267094&APPID=${API_KEY}`
+  
+  const { id } = req.query
+  const url = `http://api.openweathermap.org/data/2.5/weather?id=${id}&APPID=${API_KEY}`
   
   fetch(url)
   .then(response => response.json())
