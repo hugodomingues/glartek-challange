@@ -1,7 +1,11 @@
 <template>
   <div>
     <div>
-      <select class="form-select" @change="getWeatherApiResponse($event)" style="width: 18rem">
+      <select
+        class="form-select"
+        @change="getWeatherApiResponse($event)"
+        style="width: 18rem"
+      >
         <option
           v-for="(option, index) in localeOptions"
           :key="index"
@@ -12,20 +16,16 @@
       </select>
     </div>
     <div>
-      
       <div v-if="city">
         <div class="card" style="width: 18rem">
           <div class="card-body">
-            <h5 class="card-title">Current Temperature In {{ city  }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ temperatura }}ºC 
-            <img :src="iconSrc" alt="">
+            <h5 class="card-title">Current Temperature In {{ city }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">
+              {{ temperatura }}ºC
+              <img :src="iconSrc" alt="" />
             </h6>
-            <p class="card-text">
-            Maximum Temperature: {{ maxTemp }}ºC
-            </p>
-            <p class="card-text">
-             Minimum Temperature: {{ minTemp }}ºC
-            </p>
+            <p class="card-text">Maximum Temperature: {{ maxTemp }}ºC</p>
+            <p class="card-text">Minimum Temperature: {{ minTemp }}ºC</p>
           </div>
         </div>
       </div>
@@ -52,16 +52,26 @@ export default {
       maxTemp: null,
       minTemp: null,
       city: null,
-      iconSrc: null
+      iconSrc: null,
     };
   },
   methods: {
     getWeatherApiResponse(event) {
       let localeId = event.target.value;
-      axios.get(`http://localhost:7070/api-call?id=${localeId}` ).then((response) => {
-        this.apiResponse = response.data;
-        this.getTemperatura();
-      });
+      const getData = axios
+        .get(`http://localhost:7070/api-call?id=${localeId}`)
+        .then((response) => {
+          this.apiResponse = response.data;
+          this.getTemperatura();
+        })
+        .catch(() => {
+          alert("It was not possible to collect information");
+        });
+
+      //update the info every 30 minutes after we choose a place
+      setInterval(() => {
+        getData;
+      }, 1800000);
     },
     getTemperatura() {
       const { main, name, weather } = this.apiResponse;
@@ -72,7 +82,7 @@ export default {
       this.minTemp = this.convertToCelsius(temp_min);
       this.maxTemp = this.convertToCelsius(temp_max);
       this.city = name;
-      this.iconSrc = `http://openweathermap.org/img/wn/${icon}@2x.png`
+      this.iconSrc = `http://openweathermap.org/img/wn/${icon}@2x.png`;
     },
     convertToCelsius(kelvinTemp) {
       return Number.parseFloat(kelvinTemp - 273.15).toFixed(2);
